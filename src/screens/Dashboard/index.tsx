@@ -1,5 +1,6 @@
 import React from "react";
 import { Cards } from "../../components/Cards";
+import { TransactionCard } from "../../components/TransactionCard";
 
 import {
   Container,
@@ -12,6 +13,8 @@ import {
   UserName,
   Icon,
   CardsGroup,
+  Transactions,
+  Title,
 } from "./styles";
 
 export function Dashboard() {
@@ -54,6 +57,12 @@ export function Dashboard() {
           lastTransaction="01 à 16 de abril"
         />
       </CardsGroup>
+
+      <Transactions>
+        <Title>Listagem</Title>
+        
+        <TransactionCard />
+      </Transactions>
     </Container>
   );
 }
