@@ -72,7 +72,7 @@ export function Register() {
       return Alert.alert("Selecione uma categoria");
     }
 
-    const data = {
+    const newTransaction = {
       name: form.name,
       amount: form.amount,
       transactionType,
@@ -80,7 +80,16 @@ export function Register() {
     };
 
     try {
-      await AsyncStorage.setItem(dataKey, JSON.stringify(data));
+      const data = await AsyncStorage.getItem(dataKey);
+      const currentData = data ? JSON.parse(data) : [];
+
+      const dataFormatted = [
+        ...currentData,
+        newTransaction,
+      ]
+
+
+      await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
 
     } catch (error) {
       console.log(error);
@@ -89,13 +98,19 @@ export function Register() {
   }
 
   useEffect(() => { 
-    async function loadData() {
+/*     async function loadData() {
       const data = await AsyncStorage.getItem(dataKey);
 
       console.log("Dados da minha transação", JSON.parse(data!));
     }
 
-    loadData();
+    loadData(); */
+
+    async function removeAll() {
+      await AsyncStorage.removeItem(dataKey);
+    }
+
+    removeAll();
   }, [])
 
   return (
