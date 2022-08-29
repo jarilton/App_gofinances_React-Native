@@ -39,7 +39,7 @@ export function AppRoutes() {
         }}
       />
       <Screen
-        name="Cadastro"
+        name="Cadastrar"
         component={Register}
         options={{
           tabBarIcon: ({ size, color }) => (
