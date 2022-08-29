@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from "react-native";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import uuid from "react-native-uuid";
 
 import { useForm } from "react-hook-form";
+import { useNavigation } from "@react-navigation/native";
 
 import { Button } from "../../components/Form/Button";
 import { InputForm } from "../../components/Form/InputForm";
@@ -31,21 +33,26 @@ const schema = Yup.object().shape({
   name: Yup.string().required("Nome é obrigatótio!"),
   amount: Yup.number()
     .typeError("Informe um valor númerico!")
-    .positive("O valor não pode ser negativo!")
+    .positive("O valor não pode ser negativo!"),
 });
 
 export function Register() {
   const [transactionType, setTransactionType] = useState("");
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+
   const dataKey = "@gofinances:transactions";
+
   const [category, setCategory] = useState({
     key: "category",
     name: "Categoria",
   });
 
+  const navigation = useNavigation();
+
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -73,23 +80,30 @@ export function Register() {
     }
 
     const newTransaction = {
+      id: String(uuid.v4()),
       name: form.name,
       amount: form.amount,
       transactionType,
       category: category.key,
+      date: new Date(),
     };
 
     try {
       const data = await AsyncStorage.getItem(dataKey);
       const currentData = data ? JSON.parse(data) : [];
 
-      const dataFormatted = [
-        ...currentData,
-        newTransaction,
-      ]
-
+      const dataFormatted = [...currentData, newTransaction];
 
       await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
+
+      reset();
+      setTransactionType("");
+      setCategory({
+        key: "category",
+        name: "Categoria",
+      });
+
+      navigation.navigate("Listagem");
 
     } catch (error) {
       console.log(error);
@@ -97,21 +111,21 @@ export function Register() {
     }
   }
 
-  useEffect(() => { 
-/*     async function loadData() {
+  useEffect(() => {
+    async function loadData() {
       const data = await AsyncStorage.getItem(dataKey);
 
       console.log("Dados da minha transação", JSON.parse(data!));
     }
 
-    loadData(); */
+    loadData();
 
-    async function removeAll() {
+    /*     async function removeAll() {
       await AsyncStorage.removeItem(dataKey);
     }
 
-    removeAll();
-  }, [])
+    removeAll(); */
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
