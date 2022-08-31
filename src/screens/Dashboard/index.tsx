@@ -29,16 +29,38 @@ export interface DataListProps extends TransactionCardProps {
   id: string;
 }
 
+interface GroupCardProps {
+  amount: string;
+}
+
+interface GroupCardData {
+  entries: GroupCardProps;
+  expensives: GroupCardProps;
+  total: GroupCardProps;
+}
+
 export function Dashboard() {
-  const [data, setData] = useState<DataListProps[]>([]);
+  const [transactions, setTransactions] = useState<DataListProps[]>([]);
+  const [groupCardData, setGroupCardData] = useState<GroupCardData>(
+    {} as GroupCardData
+  );
 
   async function loadTransactions() {
     const dataKey = "@gofinances:transactions";
     const response = await AsyncStorage.getItem(dataKey);
     const transactions = response ? JSON.parse(response) : [];
 
+    let entriesTotal = 0;
+    let expensiveTotal = 0;
+
     const transactionsFormatted: DataListProps[] = transactions.map(
       (item: DataListProps) => {
+        if (item.type === "positive") {
+          entriesTotal += Number(item.amount);
+        } else {
+          expensiveTotal += Number(item.amount);
+        }
+
         const amount = Number(item.amount).toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
@@ -61,21 +83,44 @@ export function Dashboard() {
       }
     );
 
-    setData(transactionsFormatted);
+    setTransactions(transactionsFormatted);
+
+    const total = entriesTotal - expensiveTotal;
+
+    setGroupCardData({
+      entries: {
+        amount: entriesTotal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+      },
+      expensives: {
+        amount: expensiveTotal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+      },
+      total: {
+        amount: total.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+      },
+    });
   }
 
   useEffect(() => {
     loadTransactions();
 
-    /* Serve para limpar a lista */
-    
     //const dataKey = "@gofinances:transactions";
     //AsyncStorage.removeItem(dataKey);
   }, []);
 
-  useFocusEffect(useCallback(() => {
-    loadTransactions();
-  }, []));
+  useFocusEffect(
+    useCallback(() => {
+      loadTransactions();
+    }, [])
+  );
 
   return (
     <Container>
@@ -100,19 +145,19 @@ export function Dashboard() {
         <Cards
           type="up"
           title="Entrada"
-          amount="R$ 17.400,00"
+          amount={groupCardData.entries.amount}
           lastTransaction="Última entrada dia 13 de abril"
         />
         <Cards
           type="down"
           title="Saídas"
-          amount="R$ 1.259,00"
+          amount={groupCardData.expensives.amount}
           lastTransaction="Última saída dia 03 de abril"
         />
         <Cards
           type="total"
           title="Total"
-          amount="R$ 16.141,00"
+          amount={groupCardData.total.amount}
           lastTransaction="01 à 16 de abril"
         />
       </CardsGroup>
@@ -121,7 +166,7 @@ export function Dashboard() {
         <Title>Listagem</Title>
 
         <ListTransactions
-          data={data}
+          data={transactions}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
         />
