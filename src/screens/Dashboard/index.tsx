@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Cards } from "../../components/Cards";
+
+import { useFocusEffect } from "@react-navigation/native";
+
 import {
   TransactionCard,
   TransactionCardProps,
@@ -63,7 +66,16 @@ export function Dashboard() {
 
   useEffect(() => {
     loadTransactions();
+
+    /* Serve para limpar a lista */
+    
+    //const dataKey = "@gofinances:transactions";
+    //AsyncStorage.removeItem(dataKey);
   }, []);
+
+  useFocusEffect(useCallback(() => {
+    loadTransactions();
+  }, []));
 
   return (
     <Container>
