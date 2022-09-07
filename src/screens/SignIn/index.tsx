@@ -13,12 +13,12 @@ import AppleSvg from "../../assets/apple.svg";
 import LogoSvg from "../../assets/logo.svg";
 import { RFValue } from "react-native-responsive-fontsize";
 import { SignInSocialButton } from "../../components/SignInSocialButton";
-import { AuthContext } from "../../AuthContext";
+import { useAuth } from "../../hooks/auth";
 
 export function SignIn() {
-  const data = useContext(AuthContext)
+  const { user } = useAuth()
 
-  console.log(data);
+  console.log(user);
 
   return (
     <Container>
