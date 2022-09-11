@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "styled-components";
+import { useAuth } from "../../hooks/auth";
 
 import { Cards } from "../../components/Cards";
 import {
@@ -50,17 +51,20 @@ export function Dashboard() {
     {} as GroupCardData
   );
   const theme = useTheme();
+  const { signOut, user } = useAuth();
 
   function getLastTransactionDate(
     collection: DataListProps[],
     type: "positive" | "negative"
   ) {
-    const lastTransactions = new Date (Math.max.apply(
-      Math,
-      collection
-        .filter((transaction) => transaction.type === type)
-        .map((transaction) => new Date(transaction.date).getTime())
-    ));
+    const lastTransactions = new Date(
+      Math.max.apply(
+        Math,
+        collection
+          .filter((transaction) => transaction.type === type)
+          .map((transaction) => new Date(transaction.date).getTime())
+      )
+    );
 
     return `${lastTransactions.getDate()} de ${lastTransactions.toLocaleString(
       "pt-BR",
@@ -116,7 +120,7 @@ export function Dashboard() {
       transactions,
       "negative"
     );
-    const totalInterval = `01 a ${lastTransactionExpensives}`
+    const totalInterval = `01 a ${lastTransactionExpensives}`;
 
     const total = entriesTotal - expensiveTotal;
 
@@ -173,15 +177,19 @@ export function Dashboard() {
               <UserInfo>
                 <Photo
                   source={{
-                    uri: "https://avatars.githubusercontent.com/u/59670578?v=4",
+                    uri: user.photo,
                   }}
                 />
                 <User>
                   <UserGreting>Olá,</UserGreting>
-                  <UserName>Jamal</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <Icon name="power" />
+
+              <Icon 
+                name="power" 
+                onPress={signOut} 
+              />
             </UserWrapper>
           </Header>
 

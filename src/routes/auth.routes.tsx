@@ -5,13 +5,13 @@ import { SignIn } from "../screens/SignIn";
 
 const { Navigator, Screen } = createStackNavigator();
 
-interface Props {
-    headerMode: string;
-}
-
 export function AuthRoutes() {
   return (
-    <Navigator headerMode="none">
+    <Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Screen name="SignIn" component={SignIn} />
     </Navigator>
   );

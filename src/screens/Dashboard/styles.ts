@@ -31,6 +31,7 @@ export const UserInfo = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+
 export const Photo = styled.Image`
   width: ${RFValue(48)}px;
   height: ${RFValue(48)}px;
