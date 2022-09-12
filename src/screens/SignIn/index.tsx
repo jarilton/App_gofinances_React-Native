@@ -12,10 +12,11 @@ import {
 import GoogleSvg from "../../assets/google.svg";
 import AppleSvg from "../../assets/apple.svg";
 import LogoSvg from "../../assets/logo.svg";
-import { RFValue } from "react-native-responsive-fontsize";
-import { useTheme } from "styled-components";
 import { SignInSocialButton } from "../../components/SignInSocialButton";
+import { RFValue } from "react-native-responsive-fontsize";
+
 import { useAuth } from "../../hooks/auth";
+import { useTheme } from "styled-components";
 
 export function SignIn() {
   const [isLoading, setIsLoading] = useState(false);

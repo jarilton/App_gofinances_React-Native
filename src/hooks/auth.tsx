@@ -56,6 +56,7 @@ function AuthProvider({ children }: AuthProviderprops) {
 
       const { type, params } = (await AuthSession.startAsync({
         authUrl,
+        showInRecents: true,
       })) as AuthorizationResponse;
 
       if (type === "success") {
