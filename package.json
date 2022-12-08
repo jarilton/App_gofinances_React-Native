@@ -56,7 +56,8 @@
     "typescript": "^4.6.3"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect"]
   },
   "private": true
 }
